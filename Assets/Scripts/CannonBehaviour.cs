@@ -60,6 +60,10 @@ public class CannonBehaviour : MonoBehaviour
 
         obj.GetComponent<Rigidbody>().velocity = launchDirection * launchPower;
 
+        if (obj.TryGetComponent<ItemBehaviour>(out ItemBehaviour item))
+        {
+            item.CountDown();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -69,11 +73,17 @@ public class CannonBehaviour : MonoBehaviour
         //Debug.Log(other.name + " Tag: " + other.tag);
 
 
-        if(other.tag == "Item")
+        //if(other.tag == "Item")
+        //{
+
+        //}
+
+        if (other.gameObject.TryGetComponent<ItemBehaviour>(out ItemBehaviour item))
         {
             Debug.Log("Loading");
             ammo.Enqueue(other.gameObject);
             StartCoroutine(MoveToLoad(other.gameObject, 0.6f));
+            //item.CountDown();
         }
     }
 }
