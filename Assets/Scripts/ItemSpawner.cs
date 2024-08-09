@@ -9,6 +9,8 @@ public class ItemSpawner : MonoBehaviour
 
     public bool occupied = false;
 
+    public Team team;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +29,7 @@ public class ItemSpawner : MonoBehaviour
             return;
 
         item.gameObject.SetActive(true);
-        item.transform.position = spawnPoint.position;
-        Debug.Log(item.transform.position);
+        item.transform.position = spawnPoint.position/* - new Vector3(20, 0, 0)*/;
+        Debug.Log(item.transform.localPosition);
     }
 }

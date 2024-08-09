@@ -27,6 +27,8 @@ public class ItemBehaviour : MonoBehaviour
 
         yield return new WaitForSeconds(3);
         Debug.Log("Self Destructing");
-        ItemSpawnManager.Instance.DespawnItem(this);
+        ItemManager.Instance.DespawnItem(this);
     }
+
+
 }
