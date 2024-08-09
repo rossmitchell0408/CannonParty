@@ -18,10 +18,18 @@ public class ItemSpawnManager : MonoBehaviour
     }
     /*******************************************/
 
-    [SerializeField]
-    List<ItemBehaviour> itemPrefabs;
-    List<ItemSpawner> itemSpawners;   
-    List<ItemBehaviour> inactiveItems;
+    class TeamSpawner
+    {
+        public List<ItemSpawner> itemSpawners;
+        public Team team;
+    }
+
+
+    //[SerializeField]
+    //List<ItemBehaviour> itemPrefabs;
+    //List<ItemSpawner> itemSpawners;
+    List<TeamSpawner> teamSpawners;
+    //List<ItemBehaviour> inactiveItems;
     [SerializeField]
     int maxItems;
 
@@ -32,18 +40,49 @@ public class ItemSpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        itemSpawners = new List<ItemSpawner>(FindObjectsOfType<ItemSpawner>());
+        SetupSpawnerLists();
+        //itemSpawners = new List<ItemSpawner>(FindObjectsOfType<ItemSpawner>());
         //inactiveItems = new List<ItemBehaviour>();
 
         //CreateItems();
 
-        StartCoroutine(SpawnDelay(Team.LEFT));
+        for(int i = 0; i < (int)Team.MAXTEAMCOUNT; i++)
+        {
+            StartCoroutine(SpawnDelay((Team)i));
+        }
+        
     }
 
-    // Update is called once per frame
-    void Update()
+    void SetupSpawnerLists()
     {
-        
+        teamSpawners = new List<TeamSpawner>();
+        List<ItemSpawner> spawners = new List<ItemSpawner>(FindObjectsOfType<ItemSpawner>());
+
+        for(int i = 0; i < (int)Team.MAXTEAMCOUNT; i++)
+        {
+            teamSpawners.Add(new TeamSpawner());
+            teamSpawners[i].team = (Team)i;
+            teamSpawners[i].itemSpawners = new List<ItemSpawner>();
+
+            foreach (ItemSpawner spawner in spawners)
+            {
+                if (spawner.team == teamSpawners[i].team)
+                {
+                    teamSpawners[i].itemSpawners.Add(spawner);
+                }
+            }
+        }
+    }
+
+    List<ItemSpawner> GetSpawnerListByTeam(Team team)
+    {
+        foreach (TeamSpawner t in teamSpawners)
+        {
+            if (team == t.team)
+                return t.itemSpawners;
+        }
+
+        return null;
     }
 
     //void CreateItems()
@@ -67,7 +106,7 @@ public class ItemSpawnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(spawnDelay);
 
-        ItemSpawner spawner = GetRandomSpawner();
+        ItemSpawner spawner = GetRandomSpawner(team);
 
         if (spawner == null)
         {
@@ -104,8 +143,10 @@ public class ItemSpawnManager : MonoBehaviour
     //    item.gameObject.SetActive(false);
     //}
 
-    ItemSpawner GetRandomSpawner()
+    ItemSpawner GetRandomSpawner(Team team)
     {
+        List<ItemSpawner> itemSpawners = GetSpawnerListByTeam(team);
+
         if (itemSpawners == null)
             return null;
 

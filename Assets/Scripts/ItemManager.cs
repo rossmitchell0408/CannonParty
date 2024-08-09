@@ -10,6 +10,7 @@ Create Save Files with lists of teams items
 Read from file when creating each teams item list
 Only instantiate items in teams file
 Build the list when game begins and remove all items when game ends or just before new game
+Need better fail safes for some functions out of list size
 *******/
 
 public class ItemManager : MonoBehaviour
@@ -61,12 +62,11 @@ public class ItemManager : MonoBehaviour
             teamItems[i].team = (Team)i;
 
             teamItems[i].items = new List<ItemBehaviour>();
-            teamItems[i].team = Team.LEFT;
 
             for (int j = 0; j < maxItemsPerTeam; j++)
             {
-                // TODO: Include function that checks which prefab to instantiate
-                teamItems[i].items.Add(Instantiate(itemPrefabs[0]));
+                // TODO: Include function that checks which prefab to instantiate based on list of items
+                teamItems[i].items.Add(Instantiate(itemPrefabs[i]));
                 teamItems[i].items[j].gameObject.SetActive(false);
             }
         }
